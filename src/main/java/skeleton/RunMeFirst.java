@@ -51,8 +51,11 @@ public class RunMeFirst {
 	}
 
 	public static void main(String[] args) throws Exception {
+		if(args.length == 0) {
+			throw new Exception("Need to specify the project directory!");
+		}
 		String projDir = args[0];
-		if(projDir == null) {
+		if(args[0] == null) {
 			throw new Exception("Need to specify the project directory!");
 		}
 		if(!isFileValid(projDir)) {
