@@ -1,0 +1,5 @@
+|cakecount	|status			|
+|1			|is fine		|
+|2			|is still ok	|
+|3			|is a bit full	|
+|55			|growl			|
