@@ -16,4 +16,4 @@ Feature: Belly
     When I wait 1 hour
     Then my belly <status>
 	Examples:
-		{{datatable1}}
+		${datatable1}
