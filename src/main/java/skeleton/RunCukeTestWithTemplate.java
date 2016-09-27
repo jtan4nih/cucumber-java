@@ -12,7 +12,7 @@ import org.apache.maven.cli.MavenCli;
 
 import com.google.common.base.Joiner;
 
-public class RunMeFirst {
+public class RunCukeTestWithTemplate {
 	private static final int FILE_LIMIT = 99;
 	private static String PROJECT_HOME = null;
 
@@ -38,16 +38,21 @@ public class RunMeFirst {
 
 		return joined;
 	}
+	
+	private static void writeFileContent(String absoluteFile, String text) throws IOException {
+		File file = new File(absoluteFile);
+		FileUtils.writeStringToFile(file, text, "UTF-8");
+	}
 
-	private static boolean parse(String absoluteFeatureTemplate) {
+	private static String parse(String relativeFeatureTemplate) {
 		//=== c.f. https://commons.apache.org/proper/commons-lang/javadocs/api-2.6/org/apache/commons/lang/text/StrSubstitutor.html
 //		String templateString = "The ${datatable1} jumped over the ${target}.\n${datatable1}";
-		String templateString = readFileContent(absoluteFeatureTemplate);
+		String temp = getPROJECT_HOME() +"/src/main/java/skeleton/"+ relativeFeatureTemplate;
+		String templateString = readFileContent(temp);
 		Map<String, String> valuesMap = new HashMap<String, String>();
 		String tableName = "datatable";
 		String currName = null;
 		StrSubstitutor sub = new StrSubstitutor(valuesMap);
-		String temp = null;
 		for(int i = 0; i< FILE_LIMIT; i++) {
 			currName = tableName + 1;
 			temp = getPROJECT_HOME() +"/src/main/java/skeleton/"+ currName + ".txt";
@@ -65,7 +70,7 @@ public class RunMeFirst {
 		
 		System.out.println("Final text = [" + resolvedString + "]");
 		
-		return false;
+		return resolvedString;
 	}
 
 	public static boolean isFileValid(String directoryOrFile) {
@@ -80,7 +85,7 @@ public class RunMeFirst {
 
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0 || args.length < 2) {
-			throw new Exception("Need to specify the project directory and the feature template file!");
+			throw new Exception("Need to specify the project directory and the feature template file. The template file (as its corresponding external source file(s)) should be under src/main/java/skeleton/ relative to the project directory.");
 		}
 		String projDir = args[0];
 		if(projDir == null) {
@@ -93,14 +98,21 @@ public class RunMeFirst {
 		if(!isFileValid(projDir)) {
 			throw new Exception("The specified project directory is invalid.");
 		}
-		if(!isFileValid(templateFile)) {
+		String temp = projDir +"/src/main/java/skeleton/"+ templateFile;
+		if(!isFileValid(temp)) {
 			throw new Exception("The specified template file is invalid.");
 		}
 		setPROJECT_HOME(projDir);
+		//=== generate the final feature file
+		String finalFeatureFile = parse(templateFile);
+		String finalFile = getPROJECT_HOME() +"/src/test/resources/skeleton/"+ templateFile + ".feature";	//TODO
+		System.out.println(finalFeatureFile);
+		writeFileContent(finalFile, finalFeatureFile);
+
+		//=== run the cuketest!
 		MavenCli cli = new MavenCli();
 //		cli.doMain(new String[]{"clean", "install"}, "project_dir", System.out, System.out);
 		cli.doMain(new String[]{"test"}, args[0], System.out, System.out);
 
-		parse(templateFile);
 	}
 }
