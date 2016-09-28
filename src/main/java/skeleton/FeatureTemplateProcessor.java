@@ -12,7 +12,7 @@ import org.apache.maven.cli.MavenCli;
 
 import com.google.common.base.Joiner;
 
-public class RunCukeTestWithTemplate {
+public class FeatureTemplateProcessor {
 	private static final int FILE_LIMIT = 99;
 	private static String PROJECT_HOME = null;
 
@@ -83,6 +83,15 @@ public class RunCukeTestWithTemplate {
 		return ret;
 	}
 
+	public static void preprocessTemplateFeatureFile(String projectDir, String templateFile) throws Exception {
+		setPROJECT_HOME(projectDir);
+		//=== generate the final feature file
+		String finalFeatureFile = parse(templateFile);
+		String finalFile = getPROJECT_HOME() +"/src/test/resources/skeleton/"+ templateFile + ".feature";	//TODO
+		System.out.println(finalFeatureFile);
+		writeFileContent(finalFile, finalFeatureFile);
+	}
+
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0 || args.length < 2) {
 			throw new Exception("Need to specify the project directory and the feature template file. The template file (as its corresponding external source file(s)) should be under src/main/java/skeleton/ relative to the project directory.");
@@ -102,12 +111,7 @@ public class RunCukeTestWithTemplate {
 		if(!isFileValid(temp)) {
 			throw new Exception("The specified template file is invalid.");
 		}
-		setPROJECT_HOME(projDir);
-		//=== generate the final feature file
-		String finalFeatureFile = parse(templateFile);
-		String finalFile = getPROJECT_HOME() +"/src/test/resources/skeleton/"+ templateFile + ".feature";	//TODO
-		System.out.println(finalFeatureFile);
-		writeFileContent(finalFile, finalFeatureFile);
+		preprocessTemplateFeatureFile(projDir, templateFile);
 
 		//=== run the cuketest!
 		MavenCli cli = new MavenCli();
