@@ -8,6 +8,15 @@ import cucumber.api.CucumberOptions;
 import cucumber.api.junit.Cucumber;
 import org.junit.runner.RunWith;
 
+/**
+ * Useful links:
+ * http://mkolisnyk.blogspot.my/2015/05/ploblem-solved-cucumber-jvm-running.html
+ * https://github.com/cucumber/cucumber/wiki/Tags
+ * http://toolsqa.com/cucumber/cucumber-options/
+ * https://thomassundberg.wordpress.com/2014/06/30/cucumber-data-tables/
+ * NodeJS/Strongloop:
+ * https://tommy-ryan.com/testing-your-apis-with-cucumber/
+ */
 //@RunWith(Cucumber.class)
 @RunWith(ExtendedCucumberRunner.class)
 @CucumberOptions(
@@ -20,7 +29,7 @@ import org.junit.runner.RunWith;
 //           },
 //  features = {"output/" },
 //  ,glue = {"org/sample/cucumber/glue" }
-//  ,tags = {"@2"}
+  ,tags = {"@2"}
 )
 public class RunCukesTest {
 	@BeforeSuite
